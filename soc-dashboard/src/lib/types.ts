@@ -42,6 +42,7 @@ export interface ThreatPacket {
   id: string;
   srcIp: string;
   dstIp: string;
+  domain?: string;
   srcPort: number;
   dstPort: number;
   protocol: ThreatProtocol;

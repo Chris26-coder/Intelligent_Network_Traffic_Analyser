@@ -2,18 +2,65 @@
 
 import React, { useState, memo } from 'react';
 import { motion } from 'framer-motion';
-import { CountryBlock } from '@/lib/types';
+import { ThreatPacket, CountryBlock } from '@/lib/types';
 import { INITIAL_COUNTRY_BLOCKS } from '@/lib/simulation/threatGenerator';
 import { ShieldOff, ShieldCheck, Zap } from 'lucide-react';
 
-function GeoKillSwitch({ sendGeoBlock, flushFirewall }: GeoKillSwitchProps) {
-  const [countries, setCountries] = useState<CountryBlock[]>(INITIAL_COUNTRY_BLOCKS);
+interface GeoKillSwitchProps {
+  threats: ThreatPacket[];
+  sendGeoBlock: (code: string, block: boolean) => void;
+  flushFirewall: () => void;
+}
+
+function GeoKillSwitch({ threats, sendGeoBlock, flushFirewall }: GeoKillSwitchProps) {
+  const [blockedCountries, setBlockedCountries] = useState<Set<string>>(new Set());
+
+  // Aggregate threats to dynamically calculate top attacking countries
+  const countries = React.useMemo(() => {
+    const map = new Map<string, CountryBlock>();
+    
+    threats.forEach(t => {
+      const code = t.srcGeo.countryCode;
+      if (!map.has(code)) {
+        map.set(code, {
+          country: t.srcGeo.country,
+          countryCode: code,
+          flag: t.srcGeo.flag,
+          attackCount: 0,
+          threatLevel: t.severity,
+          isBlocked: blockedCountries.has(code)
+        });
+      }
+      const c = map.get(code)!;
+      c.attackCount++;
+      if (t.severity === 'CRITICAL' || (t.severity === 'HIGH' && c.threatLevel !== 'CRITICAL')) {
+        c.threatLevel = t.severity;
+      }
+    });
+
+    INITIAL_COUNTRY_BLOCKS.forEach(ic => {
+      if (!map.has(ic.countryCode)) {
+        map.set(ic.countryCode, { ...ic, isBlocked: blockedCountries.has(ic.countryCode) });
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => b.attackCount - a.attackCount).slice(0, 15);
+  }, [threats, blockedCountries]);
 
   const toggleBlock = (code: string) => {
-    setCountries(prev => prev.map(c => c.countryCode === code ? { ...c, isBlocked: !c.isBlocked } : c));
+    const isNowBlocked = !blockedCountries.has(code);
+    setBlockedCountries(prev => {
+      const next = new Set(prev);
+      if (isNowBlocked) next.add(code); else next.delete(code);
+      return next;
+    });
+    sendGeoBlock(code, isNowBlocked);
   };
 
-  const blockAll = () => setCountries(prev => prev.map(c => ({ ...c, isBlocked: true })));
+  const handleFlush = () => {
+    setBlockedCountries(new Set());
+    flushFirewall();
+  };
 
   const threatColor = (t: string) => t === 'CRITICAL' ? '#FF3333' : t === 'HIGH' ? '#FF8C00' : t === 'MEDIUM' ? '#FFCC00' : '#00FF88';
 
@@ -82,9 +129,9 @@ function GeoKillSwitch({ sendGeoBlock, flushFirewall }: GeoKillSwitchProps) {
       </div>
 
       <div style={{ padding: '8px 10px', borderTop: '1px solid var(--color-panel-border)' }}>
-        <button className="hud-btn" onClick={blockAll} style={{ width: '100%', justifyContent: 'center', fontSize: 9, color: '#FF3333', borderColor: 'rgba(255,51,51,0.4)' }}>
+        <button className="hud-btn" onClick={handleFlush} style={{ width: '100%', justifyContent: 'center', fontSize: 9, color: '#00FF88', borderColor: 'rgba(0,255,136,0.4)' }}>
           <Zap size={9} />
-          APPLY IPTABLES RULES
+          FLUSH FIREWALL RULES
         </button>
       </div>
     </div>

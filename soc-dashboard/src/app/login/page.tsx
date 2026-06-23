@@ -78,7 +78,7 @@ export default function LoginPage() {
   return (
     <div style={{
       minHeight: '100vh', background: '#020810',
-      display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: 'var(--font-mono)',
       position: 'relative', overflow: 'auto',
       paddingTop: 32, paddingBottom: 32,
@@ -152,7 +152,7 @@ export default function LoginPage() {
             ))}
           </div>
 
-          <div style={{ padding: '24px 28px', overflowY: 'auto', maxHeight: '70vh' }}>
+          <div style={{ padding: '24px 28px' }}>
             <AnimatePresence mode="wait">
               {mode === 'login' ? (
                 <motion.form key="login" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}

@@ -241,9 +241,8 @@ export default function Dashboard() {
             <LiveThreatFeed threats={filteredThreats} selectedThreat={selectedThreat} onSelectThreat={selectThreat} isActive={isActive} />
           </motion.div>
 
-          {/* Geo Kill Switch — rows 3-4, expanded to show full list */}
           <motion.div variants={panelVariants} style={{ gridRow: '3 / 5', gridColumn: '1', minHeight: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <GeoKillSwitch sendGeoBlock={sendGeoBlock} flushFirewall={flushFirewall} />
+            <GeoKillSwitch threats={filteredThreats} sendGeoBlock={sendGeoBlock} flushFirewall={flushFirewall} />
           </motion.div>
 
           {/* Honeypot Attack Feed — rows 5-6 */}
@@ -299,7 +298,7 @@ export default function Dashboard() {
 
           {/* AI Threat Insights — row 1 */}
           <motion.div variants={panelVariants} style={{ gridRow: '1', gridColumn: '3', minHeight: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <AIThreatInsights threat={selectedThreat} threats={threats} aiInsightText={aiInsight} />
+            <AIThreatInsights threat={selectedThreat} threats={threats} />
           </motion.div>
 
           {/* Executive Summary (Gemini AI) — row 2 */}
