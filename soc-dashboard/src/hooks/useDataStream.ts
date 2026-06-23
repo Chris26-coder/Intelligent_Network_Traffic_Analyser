@@ -151,7 +151,14 @@ export function useDataStream(): DataStreamState {
     }
     // Dynamic import to avoid SSR issues
     import('socket.io-client').then(({ io }) => {
-      const socket = io(BACKEND_URL, { timeout: 5000 });
+      const socket = io(BACKEND_URL, { 
+        timeout: 5000,
+        transports: ['websocket'], // Bypass HTTP long-polling to avoid tunnel interceptors
+        extraHeaders: {
+          "Bypass-Tunnel-Reminder": "true",
+          "ngrok-skip-browser-warning": "true"
+        }
+      });
       socketRef.current = socket;
 
       socket.on('connect', () => {
