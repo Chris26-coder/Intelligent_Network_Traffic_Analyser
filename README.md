@@ -26,8 +26,10 @@ This repository is divided into two main components:
 ## Installation & Setup
 
 ### Prerequisites
-- Node.js (v18+)
-- Python 3.10+
+- **Node.js** (v18+)
+- **Python** (3.10+)
+- **Npcap** (Windows) or **libpcap** (Linux/Mac): Required by the `scapy` library to sniff raw network packets. 
+- **Windows OS (Optional but recommended):** The "Geo Kill Switch" feature currently uses Windows `netsh advfirewall` commands to block IPs. If running on Linux/Mac, the dashboard will still work, but the firewall blocking feature will fail.
 
 ### Frontend Setup
 ```bash
