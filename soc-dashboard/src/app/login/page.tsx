@@ -77,7 +77,7 @@ export default function LoginPage() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#020810',
+      height: '100vh', background: '#020810',
       display: 'flex', flexDirection: 'column',
       fontFamily: 'var(--font-mono)',
       position: 'relative', overflow: 'auto',
