@@ -78,10 +78,10 @@ export default function LoginPage() {
   return (
     <div style={{
       minHeight: '100vh', background: '#020810',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      display: 'flex', flexDirection: 'column',
       fontFamily: 'var(--font-mono)',
       position: 'relative', overflow: 'auto',
-      paddingTop: 32, paddingBottom: 32,
+      padding: '40px 16px',
     }}>
       {/* Animated background grid */}
       <div style={{
@@ -104,7 +104,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        style={{ width: '100%', maxWidth: mode === 'register' ? 640 : 420, padding: '0 16px', position: 'relative', zIndex: 1 }}
+        style={{ width: '100%', maxWidth: mode === 'register' ? 640 : 420, margin: 'auto', position: 'relative', zIndex: 1 }}
       >
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
