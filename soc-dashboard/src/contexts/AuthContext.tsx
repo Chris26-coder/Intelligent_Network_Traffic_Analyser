@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback((email: string, password: string) => {
     const users = getUsers();
-    const record = users[email.toLowerCase()];
+    const record = users[email.trim().toLowerCase()];
     if (!record) return { success: false, error: 'No account found with this email.' };
     if (record.password !== btoa(password)) return { success: false, error: 'Incorrect password.' };
     setUser(record.user);
@@ -75,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = useCallback((data: RegisterData) => {
     const users = getUsers();
-    const key = data.email.toLowerCase();
+    const key = data.email.trim().toLowerCase();
     if (users[key]) return { success: false, error: 'An account with this email already exists.' };
     const newUser: User = {
       id: crypto.randomUUID(),
